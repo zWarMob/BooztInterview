@@ -1,11 +1,17 @@
 <?php
 
+namespace SalesDashboard\Core;
+
+//use SalesDashboard\Models;
+use SalesDashboard\Core;
+
 class Controller
 {
     public function model($model)
     {
         require_once  'app/models/'.$model.'.php';
-        return new $model();
+        $fullyQualifiedModel = App::modelQualifier.$model;
+        return new $fullyQualifiedModel();
     }
 
     public function view($view, $data = [])

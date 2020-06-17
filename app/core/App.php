@@ -1,27 +1,44 @@
 <?php
 
+namespace SalesDashboard\Core;
+
+/*
+ * None of this works. Autoloader is needed when using variable names for classes as PHP assumes global scope
+ *
+ * use SalesDashboard\Controllers;
+ * use SalesDashboard\Controllers\Home;
+ *
+ * use SalesDashboard\Models;
+ * use SalesDashboard\Models\Customer;
+ * use SalesDashboard\Models\Item;
+ * use SalesDashboard\Models\Order;
+*/
 class App
 {
     //defaults
-    protected $controller = 'home';
+    public const controllerQualifier = 'SalesDashboard\\Controllers\\';
+    protected $controller = 'Home';
+
+    public const modelQualifier = 'SalesDashboard\\Models\\';
     protected $method = 'index';
     protected $params = [];
+
 
     public function __construct()
     {
         $url = $this->parseUrl();
 
-        var_dump($url);
-
         if(file_exists('app/controllers/'.$url[0].'.php'))
         {
-            $this->controller = $url[0];
+            $this->controller = $this->$url[0];
             unset($url[0]);
         }
 
         require_once 'app/controllers/'.$this->controller.'.php';
 
-        $this->controller = new $this->controller;
+        $fullyQualifiedController = ($this::controllerQualifier.$this->controller);
+
+        $this->controller = new $fullyQualifiedController;
 
         if(isset($url[1]))
         {

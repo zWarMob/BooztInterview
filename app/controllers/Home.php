@@ -1,5 +1,9 @@
 <?php
 
+namespace SalesDashboard\Controllers;
+
+use SalesDashboard\Core\Controller;
+
 class Home extends Controller
 {
     //show dashboard
