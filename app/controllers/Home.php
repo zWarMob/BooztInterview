@@ -9,8 +9,7 @@ class Home extends Controller
     //show dashboard
     public function Index()
     {
-        $customer = $this->model('Customer');
-
+        $this->model('RichOrderViewModel');
         $this->view('home/index');
     }
 }

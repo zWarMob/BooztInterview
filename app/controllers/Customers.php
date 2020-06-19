@@ -9,8 +9,7 @@ class Customers extends Controller
     //show dashboard
     public function Index()
     {
-        $customer = $this->model('Customer');
-
+        $this->model('Customer');
         $this->view('customers/index');
     }
 }

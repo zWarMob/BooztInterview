@@ -9,8 +9,7 @@ class Orders extends Controller
     //show dashboard
     public function Index()
     {
-        $order = $this->model('Order');
-
+        $this->model('Order');
         $this->view('orders/index');
     }
 }
