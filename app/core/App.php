@@ -30,7 +30,7 @@ class App
 
         if(file_exists('app/controllers/'.$url[0].'.php'))
         {
-            $this->controller = $this->$url[0];
+            $this->controller = $url[0];
             unset($url[0]);
         }
 
