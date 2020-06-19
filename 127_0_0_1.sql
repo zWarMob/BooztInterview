@@ -118,6 +118,33 @@ INSERT INTO `order_items` (`order_id`, `item_id`, `quantity`) VALUES
 (4, 2, 1),
 (4, 4, 2);
 
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `rich_order_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `rich_order_view` (
+`order_id` int(11)
+,`item_id` int(11)
+,`quantity` int(11)
+,`customer_id` int(11)
+,`purchase_date` date
+,`EAN` varchar(12)
+,`price` float
+,`name` varchar(255)
+,`item_stock` int(11)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `rich_order_view`
+--
+DROP TABLE IF EXISTS `rich_order_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `rich_order_view`  AS  select `order_items`.`order_id` AS `order_id`,`order_items`.`item_id` AS `item_id`,`order_items`.`quantity` AS `quantity`,`orders`.`customer_id` AS `customer_id`,`orders`.`purchase_date` AS `purchase_date`,`items`.`EAN` AS `EAN`,`items`.`price` AS `price`,`items`.`name` AS `name`,`items`.`quantity` AS `item_stock` from ((`orders` join `items`) join `order_items`) where `orders`.`id` = `order_items`.`order_id` and `items`.`id` = `order_items`.`item_id` ;
+
 --
 -- Indexes for dumped tables
 --
