@@ -14,7 +14,7 @@ class Customer
     public $email;
 
     public static function create($first_name, $last_name, $email){
-        $query = "INSERT INTO customers (first_name,$last_name,$email) VALUES (?, ?, ?)";
+        $query = "INSERT INTO customers (first_name, last_name, email) VALUES (?, ?, ?)";
         $paramType = "sss";
         $paramValue = array(
             $first_name,
