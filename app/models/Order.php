@@ -18,6 +18,6 @@ class Order
 
         $db_handle = new DBController();
 
-        return $db_handle->runQuery($query);
+        return $db_handle->runBaseQuery($query);
     }
 }

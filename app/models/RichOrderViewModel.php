@@ -13,6 +13,20 @@ class RichOrderViewModel
 
         $db_handle = new DBController();
 
-        return $db_handle->runQuery($query);
+        return $db_handle->runBaseQuery($query);
+    }
+
+    public static function query($dateFrom, $dateTo){
+        //'2020-06-20' as date format
+        $query = "SELECT * FROM `rich_order_view` WHERE `purchase_date` BETWEEN CAST( ? AS DATE) AND CAST( ? AS DATE)";
+        $paramType = "ss";
+        $paramValue = array(
+            $dateFrom,
+            $dateTo
+        );
+
+        $db_handle = new DBController();
+
+        return $db_handle->runQuery($query, $paramType, $paramValue);
     }
 }

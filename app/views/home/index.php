@@ -9,13 +9,13 @@
         <div class="input-group-prepend">
             <span class="input-group-text" id="basic-addon1">From</span>
         </div>
-        <input type="date" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+        <input id="dateFromInput" type="date" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
     </div>
     <div class="input-group mb-3 mr-3">
         <div class="input-group-prepend">
             <span class="input-group-text" id="basic-addon1">To</span>
         </div>
-        <input type="date" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+        <input id="dateToInput" type="date" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
     </div>
     <button id="updateQueryBtn" type="button" class="btn btn-primary mb-3 mr-3">Query</button>
 </div>
@@ -29,7 +29,7 @@
 
     var data = <?php echo json_encode($orders) ?>;
 
-    var datasets = getDatasetsFromData(data);
+    var datasets = getDatasetsFromData(data, datesQueried);
 
     var customersAndOrdersChartElement = document.getElementById('customers_and_orders');
     var customersAndOrdersChart = new Chart(customersAndOrdersChartElement, {
@@ -51,9 +51,8 @@
         }
     });
 
-    function getDatasetsFromData(data){
+    function getDatasetsFromData(data, datesQueried){
         data = groupBy(data, x=>x.purchase_date);
-
 
         var ordersDataset = Array(datesQueried.length).fill(0);
         var customersDataset = Array(datesQueried.length).fill(0);
@@ -73,12 +72,26 @@
         return {chartLabels: chartLabels, ordersDataset: ordersDataset, customersDataset: customersDataset};
     }
 
-    //Set event listener for btn
-    //Query for orders data between 2 dates
-    //var datasets = getDatasetsFromData(queriedData)
-    //Update datesQueried array
-    //customersAndOrdersChart.data.labels = getDates(dateFrom, dateTo);
-    //customersAndOrdersChart.data.datasets[0].data = datasets.ordersDataset;
-    //customersAndOrdersChart.data.datasets[1].data = datasets.customersDataset;
+    document.getElementById("updateQueryBtn").onclick = function(){
+        var dateFrom = document.getElementById("dateFromInput").value;
+        var dateTo = document.getElementById("dateToInput").value;
+
+        httpGetAsync(`/home/QueryRichOrderView?to=${dateTo}&from=${dateFrom}`,function(data){
+            if(data==null)
+                alert("No data found for period");
+            else
+            {
+                var datesForLabeling = getDates(new Date(dateFrom), new Date(dateTo));
+
+                datasets = getDatasetsFromData(JSON.parse(data),datesForLabeling);
+
+                customersAndOrdersChart.data.labels = datesForLabeling.map(x => x.toLocaleString("da-DK", { month: 'long', day: 'numeric' }));
+                customersAndOrdersChart.data.datasets[0].data = datasets.ordersDataset;
+                customersAndOrdersChart.data.datasets[1].data = datasets.customersDataset;
+
+                customersAndOrdersChart.update();
+            }
+        });
+    };
 
 </script>

@@ -42,9 +42,9 @@ class App
 
         if(isset($url[1]))
         {
-            if(method_exists($this->controller, $url[1]))
+            if(method_exists($this->controller, strtok($url[1], '?')))
             {
-                $this->method = $url[1];
+                $this->method = strtok($url[1], '?');
                 unset($url[1]);
             }
         }

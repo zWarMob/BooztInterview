@@ -41,7 +41,7 @@ class DBController
         return $sql->insert_id;
     }
 
-    function runQuery($query) {
+    function runBaseQuery($query) {
         $resultset = array();
         $result = $this->conn->query($query);
         if ($result->num_rows > 0) {
@@ -50,5 +50,22 @@ class DBController
             }
         }
         return $resultset;
+    }
+
+    function runQuery($query, $param_type, $param_value_array) {
+        $sql = $this->conn->prepare($query);
+        $this->bindQueryParams($sql, $param_type, $param_value_array);
+        $sql->execute();
+        $result = $sql->get_result();
+
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $resultset[] = $row;
+            }
+        }
+
+        if(!empty($resultset)) {
+            return $resultset;
+        }
     }
 }
