@@ -20,6 +20,21 @@
     <button id="updateQueryBtn" type="button" class="btn btn-primary mb-3 mr-3">Query</button>
 </div>
 
+<div class="container-fluid">
+    <div class="row border-top border-bottom">
+        <div class="col-sm-3 col-md-2">Revenue</div>
+        <div class="col-sm-3 col-md-2"><span id="revenue" class="format-num">100,000</span> DKK</div>
+    </div>
+    <div class="row border-bottom">
+        <div class="col-sm-3 col-md-2">Customers</div>
+        <div class="col-sm-3 col-md-2"><span id="customers" class="format-num">100,000</span> DKK</div>
+    </div>
+    <div class="row border-bottom">
+        <div class="col-sm-3 col-md-2">Orders</div>
+        <div class="col-sm-3 col-md-2"><span id="orders" class="format-num">100,000</span> DKK</div>
+    </div>
+</div>
+
 <canvas id="customers_and_orders" width="400" height="100"></canvas>
 
 <script>
