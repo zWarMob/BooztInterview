@@ -23,15 +23,15 @@
 <div class="container-fluid">
     <div class="row border-top border-bottom">
         <div class="col-sm-3 col-md-2">Revenue</div>
-        <div class="col-sm-3 col-md-2"><span id="revenue" class="format-num">100,000</span> DKK</div>
+        <div class="col-sm-3 col-md-2"><span id="revenue" class="format-num">-</span></div>
     </div>
     <div class="row border-bottom">
         <div class="col-sm-3 col-md-2">Customers</div>
-        <div class="col-sm-3 col-md-2"><span id="customers" class="format-num">100,000</span> DKK</div>
+        <div class="col-sm-3 col-md-2"><span id="customers" class="format-num">-</span></div>
     </div>
     <div class="row border-bottom">
         <div class="col-sm-3 col-md-2">Orders</div>
-        <div class="col-sm-3 col-md-2"><span id="orders" class="format-num">100,000</span> DKK</div>
+        <div class="col-sm-3 col-md-2"><span id="orders" class="format-num">-</span></div>
     </div>
 </div>
 
@@ -67,16 +67,21 @@
     });
 
     function getDatasetsFromData(data, datesQueried){
-        data = groupBy(data, x=>x.purchase_date);
+        var dataMapByDate = groupBy(data, x=>x.purchase_date);
+        var customers = groupBy(data, x=>x.customer_id).size;
+        var orders = groupBy(data, x=>x.order_id).size;
+        var revenue = 0;
+
+        for(var orderItem of data){
+            revenue += parseFloat(orderItem.price) * parseInt(orderItem.quantity);
+        }
 
         var ordersDataset = Array(datesQueried.length).fill(0);
         var customersDataset = Array(datesQueried.length).fill(0);
 
-        for (let [key, value] of data.entries()) {
-            //console.log(key + ' = ' + value)
+        for (let [key, value] of dataMapByDate.entries()) {
             var dateIndex = datesQueried.findIndex(x => x.getTime() == (new Date(key)).getTime());
             if(dateIndex != -1){
-                //ordersDataset[dateIndex] += value.length;
                 customersGroup = groupBy(value, x=>x.customer_id);
                 customersDataset[dateIndex] += customersGroup.size;
                 ordersGroup = groupBy(value, x=>x.order_id);
@@ -84,29 +89,44 @@
             }
         }
 
-        return {chartLabels: chartLabels, ordersDataset: ordersDataset, customersDataset: customersDataset};
+        return {
+            chartLabels: chartLabels,
+            ordersDataset: ordersDataset,
+            customersDataset: customersDataset,
+            revenue: revenue,
+            orders: orders,
+            customers: customers,
+        };
     }
 
+    document.getElementById("customers").innerHTML = datasets.customers;
+    document.getElementById("orders").innerHTML = datasets.orders;
+    document.getElementById("revenue").innerHTML = new Intl.NumberFormat('da-DK', { style: 'currency', currency: 'DKK' }).format(datasets.revenue);
+
     document.getElementById("updateQueryBtn").onclick = function(){
-        var dateFrom = document.getElementById("dateFromInput").value;
-        var dateTo = document.getElementById("dateToInput").value;
+    var dateFrom = document.getElementById("dateFromInput").value;
+    var dateTo = document.getElementById("dateToInput").value;
 
-        httpGetAsync(`/home/QueryRichOrderView?to=${dateTo}&from=${dateFrom}`,function(data){
-            if(data==null)
-                alert("No data found for period");
-            else
-            {
-                var datesForLabeling = getDates(new Date(dateFrom), new Date(dateTo));
+    httpGetAsync(`/home/QueryRichOrderView?to=${dateTo}&from=${dateFrom}`,function(data){
+        if(data=="null")
+            alert("No data found for period");
+        else
+        {
+            var datesForLabeling = getDates(new Date(dateFrom), new Date(dateTo));
 
-                datasets = getDatasetsFromData(JSON.parse(data),datesForLabeling);
+            datasets = getDatasetsFromData(JSON.parse(data),datesForLabeling);
 
-                customersAndOrdersChart.data.labels = datesForLabeling.map(x => x.toLocaleString("da-DK", { month: 'long', day: 'numeric' }));
-                customersAndOrdersChart.data.datasets[0].data = datasets.ordersDataset;
-                customersAndOrdersChart.data.datasets[1].data = datasets.customersDataset;
+            customersAndOrdersChart.data.labels = datesForLabeling.map(x => x.toLocaleString("da-DK", { month: 'long', day: 'numeric' }));
+            customersAndOrdersChart.data.datasets[0].data = datasets.ordersDataset;
+            customersAndOrdersChart.data.datasets[1].data = datasets.customersDataset;
 
-                customersAndOrdersChart.update();
-            }
-        });
-    };
+            customersAndOrdersChart.update();
+
+            document.getElementById("customers").innerHTML = datasets.customers;
+            document.getElementById("orders").innerHTML = datasets.orders;
+            document.getElementById("revenue").innerHTML = new Intl.NumberFormat('da-DK', { style: 'currency', currency: 'DKK' }).format(datasets.revenue);
+        }
+    });
+};
 
 </script>
