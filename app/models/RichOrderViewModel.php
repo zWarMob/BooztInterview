@@ -2,11 +2,13 @@
 
 namespace SalesDashboard\Models;
 
+use SalesDashboard\Core\DatabaseEntity;
 use SalesDashboard\Core\DBController;
 
 require_once("app/core/DBController.php");
+require_once("app/core/DatabaseEntity.php");
 
-class RichOrderViewModel
+class RichOrderViewModel extends DatabaseEntity
 {
     public static function get_all(){
         $query = "SELECT * FROM rich_order_view";

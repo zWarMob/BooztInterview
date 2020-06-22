@@ -2,11 +2,13 @@
 
 namespace SalesDashboard\Models;
 
+use SalesDashboard\Core\DatabaseEntity;
 use SalesDashboard\Core\DBController;
 
 require_once("app/core/DBController.php");
+require_once("app/core/DatabaseEntity.php");
 
-class Customer
+class Customer extends DatabaseEntity
 {
     public $id;
     public $first_name;
@@ -27,11 +29,4 @@ class Customer
         return $db_handle->insert($query, $paramType, $paramValue);
     }
 
-    public static function get_all(){
-        $query = "SELECT * FROM customers";
-
-        $db_handle = new DBController();
-
-        return $db_handle->runBaseQuery($query);
-    }
 }

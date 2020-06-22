@@ -2,22 +2,16 @@
 
 namespace SalesDashboard\Models;
 
+use SalesDashboard\Core\DatabaseEntity;
 use SalesDashboard\Core\DBController;
 
 require_once("app/core/DBController.php");
+require_once("app/core/DatabaseEntity.php");
 
-class Order
+class Order extends DatabaseEntity
 {
     public $id;
     public $customer_id;
     public $purchase_date;
     public $device_info;
-
-    public static function get_all(){
-        $query = "SELECT * FROM orders";
-
-        $db_handle = new DBController();
-
-        return $db_handle->runBaseQuery($query);
-    }
 }
